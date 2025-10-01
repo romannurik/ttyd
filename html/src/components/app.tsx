@@ -7,7 +7,12 @@ import type { ClientOptions, FlowControl } from './terminal/xterm';
 
 const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
 const path = window.location.pathname.replace(/[/]+$/, '');
-const wsUrl = [protocol, '//', window.location.host, path, '/ws', window.location.search].join('');
+let host = window.location.host;
+const fwdPort = new URL(window.location.href).searchParams.get('fwdPort');
+if (fwdPort) {
+    host = host.replace(/:.*/, ':' + fwdPort);
+}
+const wsUrl = [protocol, '//', host, path, '/ws', window.location.search].join('');
 const tokenUrl = [window.location.protocol, '//', window.location.host, path, '/token'].join('');
 const clientOptions = {
     rendererType: 'webgl',
@@ -21,28 +26,31 @@ const clientOptions = {
     unicodeVersion: '11',
 } as ClientOptions;
 const termOptions = {
-    fontSize: 13,
-    fontFamily: 'Consolas,Liberation Mono,Menlo,Courier,monospace',
+    fontSize: 14,
+    lineHeight: 1,
+    fontFamily: 'Google Sans Code,Liberation Mono,Menlo,Courier,monospace',
     theme: {
-        foreground: '#d2d2d2',
-        background: '#2b2b2b',
-        cursor: '#adadad',
-        black: '#000000',
-        red: '#d81e00',
-        green: '#5ea702',
-        yellow: '#cfae00',
-        blue: '#427ab3',
-        magenta: '#89658e',
-        cyan: '#00a7aa',
-        white: '#dbded8',
-        brightBlack: '#686a66',
-        brightRed: '#f54235',
-        brightGreen: '#99e343',
-        brightYellow: '#fdeb61',
-        brightBlue: '#84b0d8',
-        brightMagenta: '#bc94b7',
-        brightCyan: '#37e6e8',
-        brightWhite: '#f1f1f0',
+        // Google Dark theme
+        selectionBackground: '#3252b8',
+        foreground: '#b0afaf',
+        background: '#1f1f1f',
+        cursor: '#98b1ff',
+        brightWhite: '#fdfcfc',
+        white: '#b0afaf',
+        brightBlack: '#555555', // change from current google dark
+        black: '#333333', // change from current google dark
+        blue: '#7895ff',
+        brightBlue: '#98b1ff',
+        green: '#17b877',
+        brightGreen: '#66ce98',
+        cyan: '#25a6e9',
+        brightCyan: '#71c2ee',
+        red: '#f76769',
+        brightRed: '#fc8f8e',
+        magenta: '#a87ffb',
+        brightMagenta: '#c8aaff',
+        yellow: '#ffa23e',
+        brightYellow: '#ffc26e',
     } as ITheme,
     allowProposedApi: true,
 } as ITerminalOptions;
